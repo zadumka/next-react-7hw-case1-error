@@ -1,22 +1,48 @@
 import axios from 'axios';
+import { Note } from '../types/note';
 
-const API_TOKEN = process.env.NOTEHUB_TOKEN;
 axios.defaults.baseURL = 'https://notehub-public.goit.study/api';
-axios.defaults.headers.common.Authorization = `Bearer ${API_TOKEN}`;
 
-export const getAllNotes = async (searchText: string, page: number, tag: string) => {
-  const response = await axios.get('/notes', {
-    params: { search: searchText, page, tag },
+axios.defaults.headers.common.Authorization = `Bearer ${process.env.NEXT_PUBLIC_NOTEHUB_TOKEN}`;
+
+interface FetchNotesResponse {
+  notes: Note[];
+  totalPages: number;
+}
+
+export const fetchNotes = async (
+  searchText: string,
+  page: number,
+  tag: string
+) => {
+  const response = await axios.get<FetchNotesResponse>("/notes", {
+    params: {
+      ...(searchText !== "" ? { search: searchText } : {}),
+      ...(tag !== "" ? { tag } : {}),
+      page,
+      perPage: 12,
+    },
   });
   return response.data;
 };
 
-export const addNote = async (note: any) => {
-  const response = await axios.post('/notes', note);
+interface NewNoteContent {
+  title: string;
+  content?: string;
+  tag: string;
+}
+
+export const createNote = async (newNote: NewNoteContent) => {
+  const response = await axios.post<Note>('/notes', newNote);
   return response.data;
 };
 
-export const removeNote = async (id: number) => {
-  const response = await axios.delete(`/notes/${id}`);
+export const deleteNote = async (noteId: number) => {
+  const response = await axios.delete<Note>(`/notes/${noteId}`);
+  return response.data;
+};
+
+export const fetchNoteById = async (noteId: number) => {
+  const response = await axios.get<Note>(`/notes/${noteId}`);
   return response.data;
 };
