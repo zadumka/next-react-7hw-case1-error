@@ -9,10 +9,10 @@ export default async function NotesPage({ params }: { params: Promise<{ slug: st
 
   const tagFilter = tag[0] === 'All' ? '' : tag[0];
 
-  
+
   await queryClient.prefetchQuery({
-    queryKey: ['notes', tag],
-    queryFn: () => fetchNotes(),
+    queryKey: ['notes'],
+    queryFn: () => fetchNotes({ tag: tagFilter }),
   });
 
   return (
@@ -21,4 +21,3 @@ export default async function NotesPage({ params }: { params: Promise<{ slug: st
     </HydrationBoundary>
   );
 }
-
