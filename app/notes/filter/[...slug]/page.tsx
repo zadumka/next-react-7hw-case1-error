@@ -9,10 +9,9 @@ export default async function NotesPage({ params }: { params: Promise<{ slug: st
 
   const tagFilter = tag[0] === 'All' ? '' : tag[0];
 
-
   await queryClient.prefetchQuery({
-    queryKey: ['notes'],
-    queryFn: () => fetchNotes({ tag: tagFilter }),
+    queryKey: ['notes', tag],
+    queryFn: () => fetchNotes(),
   });
 
   return (
