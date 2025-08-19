@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-
+import { useDebounce } from "use-debounce";
 import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
 import NoteList from "@/components/NoteList/NoteList";
@@ -20,45 +20,40 @@ export default function NotesClient({ notesTag }: NotesClientProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
 
-  
+ 
   const { data } = useQuery({
-    queryKey: ["notes", searchQuery, notesTag, currentPage],
-    queryFn: () => fetchNotes(searchQuery, currentPage, notesTag),
+    queryKey: ["notes", debouncedSearchQuery, notesTag, currentPage],
+    queryFn: () => fetchNotes(),
     placeholderData: keepPreviousData,
   });
 
-  const toggleModal = () => setIsModalOpen((prev) => !prev);
+  const toggleModal = () => setIsModalOpen(!isModalOpen);
   const changeSearchQuery = (newQuery: string) => {
-   
+    setCurrentPage(1);
     setSearchQuery(newQuery);
   };
 
-  const totalPages = data?.totalPages ?? 0;
   const notes = data?.notes ?? [];
 
   return (
     <div className={css.app}>
       <SearchBox value={searchQuery} onSearch={changeSearchQuery} />
-      {totalPages > 1 && (
-        <Pagination
-          totalPages={totalPages}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-        />
-      )}
       <button className={css.button} onClick={toggleModal}>
         Create note +
       </button>
 
+     
       {isModalOpen && (
-        <Modal onClose={toggleModal}>
-          <NoteForm />
-         
+        <Modal>
+          
+          <NoteForm onClose={toggleModal} />
         </Modal>
       )}
 
-      {notes.length > 0 && <NoteList notes={notes} />}
+      <NoteList notes={notes} />
+      
     </div>
   );
 }
