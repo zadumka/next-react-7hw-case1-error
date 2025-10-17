@@ -4,8 +4,13 @@ export interface Note {
   id: number;
   title: string;
   content: string;
-  isArchived: boolean;
-  tag: Tag;
+  tag: string;
   createdAt: string;
-  updatedAt: string;
+  updatedAt: Tag;
+}
+
+export interface NewNoteContent {
+  title: string;
+  content?: string;
+  tag: Tag;
 }
