@@ -40,12 +40,12 @@ export const createNote = async (newNote: NewNoteContent) => {
   return response.data;
 };
 
-export const deleteNote = async (noteId: number) => {
+export const deleteNote = async (noteId: ") => {
   const response = await axios.delete<Note>(`/notes/${noteId}`);
   return response.data;
 };
 
-export const fetchNoteById = async (noteId: number) => {
+export const fetchNoteById = async (noteId: ") => {
   const response = await axios.get<Note>(`/notes/${noteId}`);
   return response.data;
 };
